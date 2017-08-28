@@ -1,0 +1,161 @@
+﻿<form ng-cloak novalidate name="addActionForm" ng-submit="vm.Save()">
+    <div class="modal-header" ng-style="::{'border-top-right-radius':'9px','border-top-left-radius':'9px','background-color':vm.requestActionTypeResolved.BackgroundColor}">
+        <h4 class="modal-title" ng-style="::{'color':vm.requestActionTypeResolved.TextColor}">{{::vm.requestActionTypeResolved.RequestActionTypeName}} : {{::vm.requestWorkspaceResolved.FormattedRequestNumber}}</h4>
+    </div>
+    <div class="modal-body">
+        <div ng-if="::vm.requestActionTypeResolved.ChangeRequestStatus">
+            <fieldset class="custom-border">
+                <legend class="custom-border">Request Status Change</legend>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                        <label class="control-label" for="lstRequestStatuses">Update Request Status To</label>
+                        <select class="form-control" name="Status" id="lstRequestStatuses" ng-model="vm.requestActionTypeResolved.SelectedStatus" ng-options="status as status.StatusName for status in vm.requestActionTypeResolved.RequestActionStatuses track by status.StatusValue">
+                            <option value="" ng-selected="true">- Select Status -</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div ng-if="::vm.requestActionTypeResolved.UpdateServiceType">
+            <fieldset class="custom-border">
+                <legend class="custom-border">Service Type Change</legend>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                        <label class="control-label" for="lstServiceTypes">Update Service Type To</label>
+                        <select class="form-control" name="ServiceType" id="lstServiceTypes" ng-model="vm.requestActionTypeResolved.SelectedServiceType" ng-options="serviceType as serviceType.ServiceTypeCompositeName for serviceType in vm.requestActionTypeResolved.ServiceTypes track by serviceType.ServiceTypeID">
+                            <option value="" ng-selected="true">- Select Service Type -</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div ng-if="::vm.requestActionTypeResolved.ReassignRequest">
+            <fieldset class="custom-border">
+                <legend class="custom-border">Reassign Request</legend>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-sm-4 col-lg-4">
+                        <label class="control-label" for="chkAssignFlag">Assign To User</label><br />
+                        <div style="display:inline-block;"><span class="switch-text">{{vm.requestActionTypeResolved.AssignUserFlag == true ? 'Yes':'No'}}</span></div>
+                        <div style="float:left;"><switch name="chkAssignFlag" ng-model="vm.requestActionTypeResolved.AssignUserFlag"></switch></div>
+                    </div>
+                    <div class="form-group col-xs-12 col-sm-8 col-lg-8">
+                        <label class="control-label">Reassign To</label>
+                        <div ng-show="vm.requestActionTypeResolved.AssignUserFlag">
+                            <select class="form-control" name="User" ng-model="vm.requestActionTypeResolved.SelectedUser" ng-options="user as user.UserFullName for user in vm.requestActionTypeResolved.RequestActionUsers track by user.UserId">
+                                <option value="" ng-selected="true">- Select User -</option>
+                            </select>
+                        </div>
+                        <div ng-show="!vm.requestActionTypeResolved.AssignUserFlag">
+                            <select class="form-control" name="OwnerGroup" ng-model="vm.requestActionTypeResolved.SelectedOwnerGroup" ng-options="owner as owner.OwnerGroupName for owner in vm.requestActionTypeResolved.RequestActionOwnerGroups track by owner.OwnerGroupID">
+                                <option value="" ng-selected="true">- Select Business Area -</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <fieldset class="custom-border">
+            <legend class="custom-border">Additional Info</legend>
+            <div style="margin-left:-15px; margin-right:-15px" ng-repeat="field in vm.requestActionTypeResolved.RequestActionCustomFields track by field.CustomFieldID">
+                <div class="clearfix" ng-if="$even"></div>
+                <div class="form-group col-xs-12 col-sm-6 col-lg-6">
+                    <label class="control-label" for="">{{field.LabelName}}</label>
+                    <div ng-if="field.CustomFieldTypeID == 1">
+                        <input ng-required="{{field.RequiredFlag}}" ng-pattern="field.RegularExpression" class="form-control" type="text" title="{{field.TooltipMessage}}" name="DynamicField_{{field.CustomFieldID}}" ng-style="{'text-align':field.TextAlignment}" placeholder="{{field.PlaceholderText}}" ng-model="field.DisplayData">
+                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.pattern">{{field.ErrorMessage}}</span>
+                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Required.</span>
+                        </div>
+                    </div>
+                    <div ng-if="field.CustomFieldTypeID == 2">
+                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="Yes" ng-model="field.DisplayData" />Yes</label>
+                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="No" ng-model="field.DisplayData" />No</label>
+                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                        </div>
+                    </div>
+                    <div ng-if="field.CustomFieldTypeID == 3">
+                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="Yes" ng-model="field.DisplayData" />Yes</label>
+                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="No" ng-model="field.DisplayData" />No</label>
+                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="NA" ng-model="field.DisplayData" />N/A</label>
+                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                        </div>
+                    </div>
+                    <div ng-if="field.CustomFieldTypeID == 4">
+                        <input model-view-value="true"  ui-mask="99/99/9999" k-options="vm.datePickerConfig" kendo-date-picker ng-required="{{field.RequiredFlag}}" class="form-control" title="{{field.TooltipMessage}}" ng-style="{'text-align':field.TextAlignment}" id="DynamicField_{{field.CustomFieldID}}" name="DynamicField_{{field.CustomFieldID}}" ng-model="field.DisplayData" placeholder="{{field.PlaceholderText}}">
+                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Required.</span>
+                        </div>
+                    </div>
+                    <div ng-if="field.CustomFieldTypeID >= 100">
+                        <select ng-change="vm.SelectListChange(field.SelectListDisplayData.SelectListValue, field.DisplayFieldValueInCommentsFlag)" ng-required="{{field.RequiredFlag}}" class="form-control" id="DynamicField_{{field.CustomFieldID}}" name="DynamicField_{{field.CustomFieldID}}" ng-model="field.SelectListDisplayData" ng-options="item.SelectListLabel for item in field.SelectListItems track by item.SelectListValue">
+                            <option value="" ng-selected="true">- {{field.PlaceholderText}} -</option>
+                        </select>
+                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                    <label class="control-label" for="txtComments">Comments</label>
+                    <textarea ng-maxlength="1000" maxlength="1001" class="form-control" name="Comments" id="txtComments" rows="3" placeholder="Please be specific" ng-model="vm.requestActionTypeResolved.Comments"></textarea>
+                    <div ng-show="addActionForm.Comments.$error.maxlength" class="validation-msg" role="alert">
+                        <span>Cannot exceed 1000 characters.</span>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div ng-if="::vm.requestActionTypeResolved.UploadDocument && vm.requestActionTypeResolved.AddActionPermission && vm.requestActionTypeResolved.PrecedenceConstraintSatisfied">
+            <fieldset class="custom-border">
+                <legend class="custom-border">Attachments</legend>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                        <input kendo-upload name="files" type="file" options="vm.actionCreateKendoUploadOptions" />
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div ng-if="::vm.requestActionTypeResolved.AssociatedRequests.length > 0 && vm.requestActionTypeResolved.AllowReplicationFlag == true">
+            <fieldset class="custom-border">
+                <legend class="custom-border">Replicate Action</legend>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                        <table id="tblAssociatedRequestCheckboxlist">
+                            <tr>
+                                <td>
+                                    <input name="chkBx_SelectAll" type="checkbox" ng-model="vm.SelectAllFlag" ng-change="vm.ToggleAssocRequestSelectAll(vm.SelectAllFlag)" />&nbsp;&nbsp;
+                                    <label for="chkBx_SelectAll">Select All</label>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="request in vm.requestActionTypeResolved.AssociatedRequests track by request.RequestID">
+                                <td>
+                                    <div kendo-tooltip k-content="'Service: {{request.ServiceTypeName}}<br>Assigned To: {{request.RequestCurrentWorkerFullName}}<br>Status: {{request.RequestStatus}}'" class="k-group">
+                                        <input ng-disabled="vm.requestActionTypeResolved.ChangeRequestStatus && request.CloseWhenChildrenAreClosedFlag" ng-change="vm.ToggleSelectAllFlag()" ng-model="request.AddAssocRequestFlag" name="chkBx_{{request.RequestID}}" type="checkbox" />&nbsp;&nbsp;
+                                        <label for="chkBx_{{request.RequestID}}">{{request.FormattedRequestNumber}}</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="pull-left">
+            <ul style="text-align:left;">
+                <li ng-if="::!vm.requestActionTypeResolved.AddActionPermission"><span class="validation-msg">You do not have permission to add this action.</span></li>
+                <li ng-if="::vm.requestActionTypeResolved.ExceededMaximumAllowedOcurrence"><span class="validation-msg">Exceeded number of allowed ocurrences for this action.</span></li>
+                <li ng-if="::vm.requestActionTypeResolved.PrecedenceConstraintSatisfied == false"><span class="validation-msg">{{::vm.requestActionTypeResolved.PrecedenceConstraintErrorMsg}}</span></li>
+            </ul>
+        </div>        
+        <button type="submit" class="btn btn-primary" ng-disabled="!addActionForm.$valid || vm.disableButton" ng-if="::vm.requestActionTypeResolved.AddActionPermission && !vm.requestActionTypeResolved.ExceededMaximumAllowedOcurrence && vm.requestActionTypeResolved.PrecedenceConstraintSatisfied">
+            <span ng-show="vm.saveButtonText == 'Saving'"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+            {{ vm.saveButtonText }}
+        </button>
+        <button class="btn btn-primary" type="button" ng-click="vm.Cancel()" ng-disabled="vm.disableButton">Cancel</button>
+    </div>
+</form>

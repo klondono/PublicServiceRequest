@@ -1,0 +1,11 @@
+﻿<div id="divServiceTypes">
+    <div class="panel-body" ng-if="!vm.serviceTypes.value.length" style="text-align:center; font-size:16px; color:#666666;">No results found.</div>
+    <div class="panel-body">
+        <div class="gs-result" ng-repeat="serviceType in vm.serviceTypes.value">
+            <div class="gs-title"><a ng-click="vm.serviceTypeSearchSharingService.GoToCreateServiceRequestView(serviceType.ServiceTypeID, serviceType.ServiceTypeOwnerGroup.ServiceTypeOwnerGroupID)">{{serviceType.ServiceTypeName}}</a>
+            </div>
+            <div class="gs-visibleUrl">{{serviceType.ServiceTypeOwnerGroup.ServiceTypeOwnerGroupName}}</div>
+            <div class="gs-snippet">{{serviceType.ServiceTypeDescription}}</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+﻿<div class="row" ng-if="vm.ShowDashboard">
+    <div style="margin-bottom:10px; font-weight:bold; text-transform:uppercase;" class="col-md-12 col-md-offset-5">{{vm.mainSearchViewModel.CurrentUser}} Statistics:</div>
+    <div class="col-md-3 col-sm-6 col-xs-6">
+        <div ng-click="vm.ExecuteDashboardFilter()" class="panel panel-back noti-box">
+            <span class="icon-box bg-color-green set-icon">
+                <i class="fa fa-bell-o"></i>
+            </span>
+            <div class="text-box">
+                <p class="main-text">{{vm.myDashboardViewModel.StatOne}} Initial Contact Req.</p>
+                <p class="text-muted">Newly Assigned</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 col-xs-6">
+        <div ng-click="vm.ExecuteDashboardFilter()" class="panel panel-back noti-box">
+            <span class="icon-box bg-color-brown set-icon">
+                <i class="fa fa-bars"></i>
+            </span>
+            <div class="text-box">
+                <p class="main-text">{{vm.myDashboardViewModel.StatTwo}} Action Required</p>
+                <p class="text-muted">Your Newly Assigned PSR's</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 col-xs-6">
+        <div ng-click="vm.ExecuteDashboardFilter()" class="panel panel-back noti-box">
+            <span style="font-size:43px;" class="icon-box bg-color-red set-icon">
+                <i class="fa fa-clock-o"></i>
+            </span>
+            <div class="text-box">
+                <p class="main-text">{{vm.myDashboardViewModel.StatThree}} Caution</p>
+                <p class="text-muted">Initial Contact Due Now</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 col-xs-6">
+        <div ng-click="vm.ExecuteDashboardFilter()" class="panel panel-back noti-box">
+            <span class="icon-box bg-color-blue set-icon">
+                <i class="fa fa-check"></i>
+            </span>
+            <div class="text-box">
+                <p class="main-text">{{vm.myDashboardViewModel.StatFour}} In-Progress</p>
+                <p class="text-muted"> Action Required</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading-blue">
+        Service Requests
+    </div>
+    <div class="panel-body">
+        <div class="col-xs-12 col-sm-12 col-lg-12" ng-if="vm.ShowDashboard">
+            <fieldset class="custom-border">
+                <legend class="custom-border">Request Search</legend>
+                <form style="margin-bottom:25px;">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            <label for="txtFolioNo">Folio Number</label>
+                            <input type="text" class="form-control" name="txtFolioNo" placeholder="Folio No." ng-model="vm.mainSearchViewModel.Folio">
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            <label for="txtRequestNo">PSR Number</label>
+                            <input type="text" class="form-control" name="txtRequestNo" placeholder="Request No" ng-model="vm.mainSearchViewModel.RequestNo">
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            <label for="txtFrom">From</label>
+                            <input kendo-date-picker style="width:100%;" class="form-control" name="txtFrom" placeholder="mm/dd/yyyy" ng-model="vm.mainSearchViewModel.CreatedFrom">
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            <label for="txtTo">To</label>
+                            <input kendo-date-picker style="width:100%;" class="form-control" name="txtTo" placeholder="mm/dd/yyyy" ng-model="vm.mainSearchViewModel.CreatedTo">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            <label for="optStatus">Status</label>
+                            <select class="form-control" name="optStatus" ng-model="vm.mainSearchViewModel.SelectedStatusID" ng-options="status.StatusValue as status.StatusName for status in vm.mainSearchViewModel.StatusList"></select>
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            <label for="txtRequestNo">Customer</label>
+                            <input type="text" class="form-control" name="txtRequestor" placeholder="Customer Name" ng-model="vm.mainSearchViewModel.Requestor">
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                            <label for="optCurrentlyAssigned">Assigned To</label>
+                            <select class="form-control" name="optCurrentlyAssigned" ng-model="vm.mainSearchViewModel.SelectedAssignee" ng-options="assignee as assignee.AssigneeName group by assignee.AssigneeType for assignee in vm.mainSearchViewModel.AssigneeList track by assignee.AssigneeUniqueID"></select>
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3 pull-left">
+                            <button style="margin-top:20px; width:90px;" type="submit" class="btn btn-success" ng-click="vm.Search()">Search</button>
+                            &nbsp;<button style="margin-top:20px;width:90px;" type="submit" class="btn btn-warning" ng-click="vm.ClearFilter()">Clear Filters</button>
+                        </div>
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+        <div style="margin-bottom:15px;" class="col-xs-12 col-sm-12 col-lg-12">
+            <kendo-grid id="gridRequestSearch" options="vm.requestSearchKendoGridOptions"></kendo-grid>
+        </div>
+    </div>
+</div>

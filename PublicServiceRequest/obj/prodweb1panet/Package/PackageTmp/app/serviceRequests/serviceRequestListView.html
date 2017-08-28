@@ -1,0 +1,10 @@
+﻿<div ng-show="vm.dataSharingService.associatedServiceTypeViewModel.AssociatedServiceTypes.length > 1" id="associatedTasks">
+    <h4>Associated Tasks</h4>
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="service in vm.dataSharingService.associatedServiceTypeViewModel.AssociatedServiceTypes" ng-if="service.ServiceTypeID != vm.$stateParams.Id" ng-model="service.ServiceTypeID" data-html="true" data-toggle="tooltip" title="">
+            <div kendo-tooltip k-content="'{{service.ServiceTypeOwnerGroupName}}'" class="k-group">
+                <label class="labelWithinListItem"><input ng-change="vm.dataSharingService.toggleServiceType(service.ServiceTypeID, service.ServiceTypeChildCheckedByDefaultFlag)" ng-disabled="service.ServiceTypeChildRequiredFlag" ng-model="service.ServiceTypeChildCheckedByDefaultFlag" type="checkbox" class="bulletWithinListItem" />{{service.ServiceTypeName}}</label>
+            </div>
+        </li>
+    </ul>
+</div>

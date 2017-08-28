@@ -1,0 +1,38 @@
+﻿<div ng-cloak >
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Folio entered has the following 'OPEN' PSR's:</h3>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <table class="table table-no-horizontal-border">
+            <thead>
+                <tr>
+                    <th style="min-width:120px;">PSR Number</th>
+                    <th>Service</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Created</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+            <tbody class="requestActions-tbody" ng-repeat="request in ::vm.requestFoliosResolved.value">
+                <tr style="border-bottom:none;">
+                    <td><span id="spnRequestNo"><a style="font-weight:bold; color:#0088cc;" ng-click='vm.GoToRequestWorkspace(request.RequestID)'>{{request.FormattedRequestNumber}}</a></span></td>
+                    <td>{{request.ServiceTypeName}}</td>
+                    <td>{{request.FormattedTaxpayerName}}</td>
+                    <td><span id="spnStatus" ng-style="{'font-weight':'bold','color':request.RequestStatusColor}">{{request.RequestStatusName}}</span></td>
+                    <td>{{request.RequestCurrentWorkerFullName}}</td>
+                    <td>{{request.AdmDateAdded | date:'MM/dd/yyyy'}}</td>
+                    <td>{{request.AdmUserAddedFullName}}</td>
+                </tr>
+                <tr>
+                    <td colspan="7"><label>Comments:</label>&nbsp;{{request.RequestComments}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="vm.AddFolio()">Continue with PSR</button>
+        <button class="btn btn-warning" type="button" ng-click="vm.Cancel()">Cancel</button>
+    </div>
+</div>

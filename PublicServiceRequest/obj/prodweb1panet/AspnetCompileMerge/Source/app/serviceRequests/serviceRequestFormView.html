@@ -1,0 +1,236 @@
+﻿<div ng-hide="!vm.blnDelay && vm.dataSharingService.associatedServiceTypeViewModel" class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <img style="display:block; margin:auto;" src="Images/ripple.gif">
+    </div>
+</div>
+<div ng-show="vm.dataSharingService.associatedServiceTypeViewModel && !vm.blnDelay">
+    <form novalidate name="requestForm" ng-submit="vm.AddRequest()">
+        <div class="panel panel-default">
+            <div class="panel-heading-blue" style="padding-bottom:13px;">
+                Service:&nbsp;{{vm.serviceTypeResolved.ServiceTypeName}}
+                <div class="pull-right">
+                    <button title="Submit" class="btn btn-default btn-circle" type="submit" ng-disabled="!requestForm.$valid"><span style="color:#0088cc;" class="glyphicon glyphicon-share-alt"></span></button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <!--Property Info Begin-->
+                <div ng-if="vm.dataSharingService.associatedServiceTypeViewModel.AssociatedServiceTypes[0].ServiceTypeIncludePropertyInfoFlag">
+                    <fieldset class="custom-border">
+                        <legend class="custom-border">Property/Customer Info.</legend>
+                        <div class="row">
+                            <div class="form-group col-xs-12 col-sm-4 col-lg-4">
+                                <label class="control-label" for="lstTaxYear">Tax Year</label>
+                                <select tabindex="1" class="form-control" name="TaxYear" id="lstTaxYear" ng-model="vm.requestResolved.SelectedYear" ng-options="taxYear as taxYear for taxYear in vm.requestResolved.TaxYearList"></select>
+                            </div>
+                            <div class="form-group col-xs-12 col-sm-8 col-lg-8">
+                                <label class="control-label" for="txtFolioNo">Enter Folio</label>
+                                <div class="input-group">
+                                    <div uib-dropdown class="input-group-btn">
+                                        <button uib-dropdown-toggle class="btn btn-default dropdown-toggle input-group-btn-adj" aria-expanded="false" aria-haspopup="true" type="button"><span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>
+                                        <ul class="dropdown-menu dropdown-menu-left">
+                                            <li>
+                                                <a ng-click="vm.propertyType = 'Real Property Folio'">Real Property</a>
+                                            </li>
+                                            <li>
+                                                <a ng-click="vm.propertyType = 'Personal Property Folio'">Personal Property</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <input tabindex="2" id="txtFolioNo" type="text" class="form-control input-group-form-control-adj" ng-blur="vm.ValidateFolio(vm.propertyType, vm.requestResolved.SelectedYear)" placeholder="{{vm.propertyType}}" ng-model="vm.searchFolioNo" ui-mask="{{vm.propertyType == 'Personal Property Folio' && '99-999999' || '99-9999-999-9999'}}" ui-mask-placeholder ui-mask-placeholder-char="_">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary input-group-btn-adj" type="button" ng-click="vm.ValidateFolio(vm.propertyType, vm.requestResolved.SelectedYear)"><i class="glyphicon glyphicon-plus"></i></button>
+                                    </div>
+                                </div>
+                                <div ng-show="vm.invalidFolio" class="validation-msg" role="alert">
+                                    <span>Invalid folio</span>
+                                </div>
+                                <div ng-show="vm.duplicateFolio" class="validation-msg" role="alert">
+                                    <span>Duplicate folio</span>
+                                </div>
+                                <ul ng-if="vm.requestResolved.FolioList.length > 0" class="list-group">
+                                    <li ng-repeat="folio in vm.requestResolved.FolioList track by $index" class="list-group-item"><a class="glyphicon glyphicon-remove" title="Remove" style="color:red;" href="" ng-click="vm.RemoveFolio($index)"></a>
+                                    &nbsp;&nbsp;{{folio.Year}}&nbsp;-&nbsp;{{folio.FormattedFolio}}&nbsp;-&nbsp;{{folio.SiteAddress}}&nbsp;<span class="redText" ng-if="folio.Cancelled == 'Y'">- Cancelled</span>&nbsp;<span class="redText" ng-if="folio.Confidential == 'Y'">- Confidential</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-12 col-sm-5 col-lg-5">
+                                <label class="control-label" for="txtFirstName">First Name</label>&nbsp;<span ng-if="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" class="redText">*</span>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <input id="chkAnonymous" type="checkbox" ng-change="vm.RemainAnonymousFlagChanged()" ng-checked="false" ng-model="vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag">
+                                    </span>
+                                    <input ng-maxlength="35" maxlength="36" tabindex="3" ng-required="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" ng-pattern="/^[A-Z0-9][0-9a-zA-Z &.,'-]*$/" ng-disabled="vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" class="form-control" type="text" name="FirstName" id="txtFirstName" placeholder="Check box if anonymous" ng-model="vm.requestResolved.RequestTaxpayerInfo.FirstName">
+                                </div>
+                                <div ng-show="requestForm.$submitted || requestForm.FirstName.$touched" class="validation-msg" role="alert">
+                                    <span ng-show="requestForm.FirstName.$error.pattern">Invalid First Name - Ex: John</span>
+                                    <span ng-show="requestForm.FirstName.$error.required">Required.</span>
+                                    <span ng-show="requestForm.FirstName.$error.maxlength">Cannot exceed 35 characters.</span>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-12 col-sm-2 col-lg-2">
+                                <label class="control-label" for="txtLastName">Middle</label>
+                                <input tabindex="4" maxlength="1" ng-disabled="vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" ng-pattern="/^[A-Z\-]{1,1}$/" class="form-control" type="text" name="MiddleInitial" id="txtMiddle" placeholder="Initial" ng-model="vm.requestResolved.RequestTaxpayerInfo.MiddleInitial">
+                                <div ng-show="requestForm.$submitted || requestForm.MiddleInitial.$touched" class="validation-msg" role="alert">
+                                    <span ng-show="requestForm.MiddleInitial.$error.pattern">Invalid middle initial.</span>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-12 col-sm-5 col-lg-5">
+                                <label class="control-label" for="txtLastName">Last Name</label>&nbsp;<span ng-if="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" class="redText">*</span>
+                                <input ng-maxlength="35" maxlength="36" tabindex="5" ng-required="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" ng-pattern="/^[A-Z0-9][0-9a-zA-Z &.,'-]*$/" ng-disabled="vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" class="form-control" type="text" name="LastName" id="txtLastName" placeholder="Last Name" ng-model="vm.requestResolved.RequestTaxpayerInfo.LastName">
+                                <div ng-show="requestForm.$submitted || requestForm.LastName.$touched" class="validation-msg" role="alert">
+                                    <span ng-show="requestForm.LastName.$error.pattern">Invalid Last Name - Ex: Smith</span>
+                                    <span ng-show="requestForm.LastName.$error.required">Required.</span>
+                                    <span ng-show="requestForm.LastName.$error.maxlength">Cannot exceed 35 characters.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-12 col-sm-2 col-lg-2">
+                                <label class="control-label" for="lstTaxYear">Language</label>&nbsp;<span ng-if="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" class="redText">*</span>
+                                <select tabindex="6" ng-required="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" ng-disabled="vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" class="form-control" name="TaxYear" id="lstLanguage" ng-model="vm.requestResolved.RequestTaxpayerInfo.RequestTaxpayerPreferredLanguageID" ng-options="language.RequestTaxpayerPreferredLanguageID as language.RequestTaxpayerPreferredLanguageName for language in vm.requestTaxpayerPreferredLanguagesResolved.value">
+                                    <option value="" ng-selected="true">- Select -</option>
+                                </select>
+                                <div ng-show="requestForm.$submitted || requestForm.TaxYear.$touched" class="validation-msg" role="alert">
+                                    <span ng-show="requestForm.TaxYear.$error.required">Required.</span>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-12 col-sm-5 col-lg-5">
+                                <label class="control-label" for="txtEmail">Email</label>&nbsp;<span ng-if="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag"><span class="redText">*</span><span class="pull-right requiredText">Email or phone is required</span></span>
+                                <input tabindex="7" ng-required="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag && !vm.requestResolved.RequestTaxpayerInfo.PhoneNo.length" ng-disabled="vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" ng-pattern="/(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})/" class="form-control" type="email" name="Email" id="txtEmail" placeholder="Email Address" ng-model="vm.requestResolved.RequestTaxpayerInfo.Email">
+                                <div ng-show="requestForm.$submitted || requestForm.Email.$touched" class="validation-msg" role="alert">
+                                    <span ng-show="requestForm.Email.$error.pattern">Incorrect email format.</span>
+                                    <span ng-show="requestForm.Email.$error.required">Email or Phone is required.</span>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-12 col-sm-5 col-lg-5">
+                                <label class="control-label" for="txtPhoneNo">Phone</label>&nbsp;<span ng-if="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag"><span class="redText">*</span><span class="pull-right requiredText">Email or phone is required</span></span>
+                                <input tabindex="8" ng-required="!vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag && !vm.requestResolved.RequestTaxpayerInfo.Email.length" ng-disabled="vm.requestResolved.RequestTaxpayerInfo.RemainAnonymousFlag" class="form-control" type="text" name="PhoneNo" id="txtPhoneNo" ui-mask="(999) 999-9999" ui-mask-placeholder ui-mask-placeholder-char="_" placeholder="Phone Number" ng-model="vm.requestResolved.RequestTaxpayerInfo.PhoneNo">
+                                <div ng-show="requestForm.$submitted || requestForm.PhoneNo.$touched" class="validation-msg" role="alert">
+                                    <span ng-show="requestForm.PhoneNo.$error.required">Email or Phone is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <!--Property Info End-->
+                <!--General Info Begin-->
+                <fieldset class="custom-border">
+                    <legend class="custom-border">General Info.</legend>
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-sm-4 col-lg-5">
+                            <label class="control-label" for="lstRequestOrigins">Origin</label>&nbsp;<span class="redText">*</span>
+                            <select tabindex="9" ng-required="true" class="form-control" name="Origin" id="lstRequestOrigins" ng-model="vm.requestResolved.RequestOriginID" ng-options="origin.RequestOriginID as origin.RequestOriginName for origin in vm.requestResolved.RequestOrigins">
+                                <option value="" ng-selected="true">- Select Origin -</option>
+                            </select>
+                            <div ng-show="requestForm.$submitted || requestForm.Origin.$touched" class="validation-msg" role="alert">
+                                <span ng-show="requestForm.Origin.$error.required">Selection required.</span>
+                            </div>
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-4 col-lg-4">
+                            <label class="control-label" for="lstRequestPriorities">Priority</label>&nbsp;<span class="redText">*</span>
+                            <select tabindex="10" required class="form-control" name="Priority" id="lstRequestPriorities" ng-model="vm.requestResolved.RequestPriorityID" ng-options="priority.RequestPriorityID as priority.RequestPriorityName for priority in vm.requestPrioritiesResolved.value">
+                                <option value="" ng-selected="true">- Select Priority -</option>
+                            </select>
+                            <div ng-show="requestForm.$submitted || requestForm.Priority.$touched" class="validation-msg" role="alert">
+                                <span ng-show="requestForm.Priority.$error.required">Selection required.</span>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12 col-sm-4 col-lg-3">
+                            <label class="control-label" for="chkNotify">Notify me of Progress</label><br />
+                            <switch disabled="vm.requestResolved.DisableProgressNotification" name="chkNotify" ng-model="vm.requestResolved.RequestUpdateNotificationFlag"></switch><span class="switch-text">{{vm.requestResolved.RequestUpdateNotificationFlag == false ? 'No':'Yes'}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                            <label class="control-label" for="txtComments">Customer Comments</label>&nbsp;<span class="redText">*</span>
+                            <textarea tabindex="11" ng-required="true" ng-maxlength="2000" maxlength="2001" class="form-control" name="Comments" id="txtComments" rows="3" placeholder="Please be specific." ng-model="vm.requestResolved.RequestComments"></textarea>
+                            <div ng-show="requestForm.$submitted || requestForm.Comments.$touched" class="validation-msg" role="alert">
+                                <span ng-show="requestForm.Comments.$error.maxlength" class="validation-msg" role="alert">Cannot exceed 2000 characters.</span>
+                                <span ng-show="requestForm.Comments.$error.required">Required.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="vm.dataSharingService.associatedServiceTypeViewModel.AssociatedServiceTypes[0].ServiceTypeIncludeFirstActionCommentFlag">
+                        <div class="form-group col-xs-12 col-sm-12 col-lg-12">
+                            <label class="control-label" for="txtCommentsInternal">PA Comments</label>
+                            <textarea tabindex="12" ng-maxlength="1000" maxlength="1001" class="form-control" name="CommentsInternal" id="txtCommentsInternal" rows="3" ng-model="vm.requestResolved.RequestCommentsInternal" placeholder="Special instructions or any initial actions taken"></textarea>
+                            <div ng-show="requestForm.CommentsInternal.$error.maxlength" class="validation-msg" role="alert">
+                                <span>Cannot exceed 1000 characters.</span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <!--General Info End-->
+                <!--Dynamic Fields Begin-->
+                <div ng-if="vm.dataSharingService.associatedServiceTypeViewModel.CustomFields.length">
+                    <fieldset class="custom-border">
+                        <legend class="custom-border">Additional Info</legend>
+                        <div ng-show="field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id" style="margin-left:-15px; margin-right:-15px" ng-repeat="field in vm.dataSharingService.associatedServiceTypeViewModel.CustomFields track by field.CustomFieldID">
+                            <div class="clearfix" ng-if="$even"></div>
+                            <div class="form-group col-xs-12 col-sm-6 col-lg-6">
+                                <label class="control-label" for="">{{field.LabelName}}</label>&nbsp;<span ng-if="field.RequiredFlag && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" class="redText">*</span>
+                                <div ng-if="field.CustomFieldTypeID == 1">
+                                    <input tabindex="13" ng-required="{{field.RequiredFlag}} && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" ng-pattern="field.RegularExpression" class="form-control" type="text" title="{{field.TooltipMessage}}" name="DynamicField_{{field.CustomFieldID}}" ng-style="{'text-align':field.TextAlignment}" placeholder="{{field.PlaceholderText}}" ng-model="field.DisplayData">
+                                    <div ng-show="requestForm.$submitted || requestForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                        <span ng-show="requestForm['DynamicField_{{field.CustomFieldID}}'].$error.pattern">{{field.ErrorMessage}}</span>
+                                        <span ng-show="requestForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Required.</span>
+                                    </div>
+                                </div>
+                                <div ng-if="field.CustomFieldTypeID == 2">
+                                    <label tabindex="13" class="radio-inline"><input ng-required="{{field.RequiredFlag}} && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="Yes" ng-model="field.DisplayData" />Yes</label>
+                                    <label class="radio-inline"><input ng-required="{{field.RequiredFlag}} && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="No" ng-model="field.DisplayData" />No</label>
+                                    <div ng-show="requestForm.$submitted || requestForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                        <span ng-show="requestForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                                    </div>
+                                </div>
+                                <div ng-if="field.CustomFieldTypeID == 3">
+                                    <label tabindex="13" class="radio-inline"><input ng-required="{{field.RequiredFlag}} && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="Yes" ng-model="field.DisplayData" />Yes</label>
+                                    <label class="radio-inline"><input ng-required="{{field.RequiredFlag}} && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="No" ng-model="field.DisplayData" />No</label>
+                                    <label class="radio-inline"><input ng-required="{{field.RequiredFlag}} && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="NA" ng-model="field.DisplayData" />N/A</label>
+                                    <div ng-show="requestForm.$submitted || requestForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                        <span ng-show="requestForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                                    </div>
+                                </div>
+                                <div ng-if="field.CustomFieldTypeID == 4">
+                                    <input model-view-value="true"  ui-mask="99/99/9999" k-options="vm.datePickerConfig" tabindex="13" kendo-date-picker ng-required="{{field.RequiredFlag}} && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" class="form-control" title="{{field.TooltipMessage}}" ng-style="{'text-align':field.TextAlignment}" id="DynamicField_{{field.CustomFieldID}}" name="DynamicField_{{field.CustomFieldID}}" ng-model="field.DisplayData" placeholder="{{field.PlaceholderText}}">
+                                    <div ng-show="requestForm.$submitted || requestForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                        <span ng-show="requestForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Required.</span>
+                                    </div>
+                                </div>
+                                <div ng-if="field.CustomFieldTypeID >= 100">
+                                    <select tabindex="13" ng-required="{{field.RequiredFlag}} && (field.ServiceTypeChildCheckedByDefaultFlag || field.ServiceTypeID == vm.$stateParams.Id)" class="form-control" id="DynamicField_{{field.CustomFieldID}}" name="DynamicField_{{field.CustomFieldID}}" ng-model="field.SelectListDisplayData" ng-options="item.SelectListLabel for item in field.SelectListItems track by item.SelectListValue">
+                                        <option value="" ng-selected="true">- {{field.PlaceholderText}} -</option>
+                                    </select>
+                                    <div ng-show="requestForm.$submitted || requestForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                        <span ng-show="requestForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Dynamic Fields End-->
+                    </fieldset>
+                </div>
+                <fieldset class="custom-border">
+                    <legend class="custom-border">Attachments</legend>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div style="margin-bottom:20px;">
+                                    <input tabindex="14" kendo-upload name="files" type="file" options="vm.requestCreateKendoUploadOptions" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="panel-footer">
+                <div class="pull-right">
+                    <button tabindex="15" class="btn btn-primary" type="submit">Submit</button>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,140 @@
+﻿@model CustomerService_PSR.Models.ApplicationViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Public Service Request</title>
+    <!--Stylesheets-->
+    <link href="~/Vendor/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Vendor/css/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Vendor/css/kendo.custom.css" rel="stylesheet" />
+    <link href="~/Vendor/css/app.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+    <link href="~/Vendor/css/angular-ui-switch.min.css" rel="stylesheet" />
+    <base href="/PSR/">
+</head>
+<body ng-app="serviceRequestApp">
+    @Html.HiddenFor(model => model.UploadFileDirectory)
+    @Html.HiddenFor(model => model.ConfidentialUploadFileDirectory)
+    @Html.HiddenFor(model => model.UploadDocumentFormats)
+    @Html.HiddenFor(model => model.UploadMaxSizeInKB)
+    @Html.HiddenFor(model => model.DocumentVirtualPath)
+    @Html.HiddenFor(model => model.ConfidentialDocumentVirtualPath)
+    @Html.HiddenFor(model => model.IsPAUser)
+    <div class="navbar-fixed-top pa-sharepoint-banner">
+        <div class="pull-left">
+            <img style="max-height: 42px; max-width:42px;" src="~/Images/gold-seal-new.png">
+        </div>
+        <span class="pa-sharepoint-banner-text pull-left">&nbsp;&nbsp;Office of the Property Appraiser</span>
+        <span class="pa-sharepoint-banner-text-appname">Public Service Request @Model.Environment</span>
+        <span class="pa-sharepoint-banner-text pull-right">@Model.LogInInfo</span>
+    </div>
+    <header class="navbar navbar-static-top pa-navbar" id="top" role="banner">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="pa-brand-image pa-navbar-brand-toggle" rel="home" href="~/" title="PA Home">
+                    <img style="max-height: 40px; max-width:40px; margin-top:-10px;" src="~/Images/gold-seal-new.png">
+                </a>
+                <a href="../" class="navbar-brand pa-navbar-brand pa-navbar-brand-toggle">PSR @Model.Environment</a>
+                <button ng-click="isCollapsed = !isCollapsed" uib-dropdown-toggle class="navbar-toggle pa-navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <nav id="bs-navbar" class="collapse navbar-collapse" uib-collapse="!isCollapsed">
+                <ul class="nav navbar-nav pa-nav">
+                    @if (Model.IsPAUser)
+                    {
+                        <li id="liHome"><a ui-sref="Search">Home</a></li>
+                    }
+                    @*<li><a ui-sref="Dashboard">Dashboard</a></li>*@
+                    <li><a ui-sref="ServiceRequest">New</a></li>
+                    @if (Model.IsPAUser)
+                    {
+                        <li id="liReports"><a target="_blank" href="http://prodsp1panet.miamidade.gov/Reports/Pages/Folder.aspx?ItemPath=%2fPA-Reports%2fPA-PublicService%2fReports">Reports</a></li>
+                    }
+                    <li><a target="_blank" href="http://prodsp1panet.miamidade.gov/sites/PA-PublicService/_layouts/15/start.aspx#/Shared%20Documents/Forms/AllItems.aspx">Help</a></li>
+                </ul>
+                @*<ul class="nav navbar-nav pa-nav">
+                    <li class="dropdown" uib-dropdown>
+                        <a uib-dropdown-toggle class="dropdown-toggle" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">Admin<span class="caret"></span></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li class="dropdown-header">Services</li>
+                            <li><a href="">View Input Types</a></li>
+                            <li><a href="">New Input Type</a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header">Action Types</li>
+                            <li><a href="">View Select List Items</a></li>
+                            <li><a href="">New Select List Item</a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header">Custom Fields</li>
+                            <li><a href="">View Data Types</a></li>
+                            <li><a href="">New Data Type</a></li>
+                        </ul>
+                    </li>
+                </ul>*@
+            </nav>
+        </div>
+    </header>
+    <div class="container" ng-app="app" autoscroll="true">
+        <div class="body-spacer"></div>
+        @if (Model.ApplicationNotification != "")
+            {
+            <div class="alert alert-danger">
+                <a onclick="$('.alert').remove()" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                @Html.Raw(Model.ApplicationNotification)
+            </div>
+        }
+        <div ui-view></div>
+    </div>
+    <!--TEMP NON MINIFIED SCRIPTS-->
+    @*<script src="~/Vendor/js/jquery.min.js"></script>
+    <script src="~/Vendor/js/nonMin/angular.js"></script>
+    <script src="~/Vendor/js/nonMin/angular-animate.js"></script>
+    <script src="~/Vendor/js/ui-bootstrap-tpls.js"></script>
+    <script src="~/Vendor/js/nonMin/angular-ui-router.js"></script>
+    <script src="~/Vendor/js/nonMin/angular-resource.js"></script>
+    <script src="~/Vendor/js/angular-filter.min.js"></script>
+    <script src="~/Vendor/js/mask.min.js"></script>
+    <script src="~/Vendor/js/kendo.all.min.js"></script>
+    <script src="~/Vendor/js/nonMin/angular-ui-switch.js"></script>*@
+    <!--Vendor Scripts-->
+    <script src="~/Vendor/js/jquery.min.js"></script>
+    <script src="~/Vendor/js/angular.min.js"></script>
+    <script src="~/Vendor/js/angular-animate.min.js"></script>
+    <script src="~/Vendor/js/ui-bootstrap-tpls.js"></script>
+    <script src="~/Vendor/js/angular-ui-router.min.js"></script>
+    <script src="~/Vendor/js/angular-resource.min.js"></script>
+    <script src="~/Vendor/js/angular-filter.min.js"></script>
+    <script src="~/Vendor/js/mask.min.js"></script>
+    <script src="~/Vendor/js/kendo.all.min.js"></script>
+    <script src="~/Vendor/js/angular-ui-switch.min.js"></script>
+
+    <!--Application Scripts-->
+    <script src="~/app/app.js"></script>
+    <!--Domain classes-->
+    <!--Services-->
+    <script src="~/app/common/services/common.services.js"></script>
+    <script src="~/app/common/services/dataAccessService.js"></script>
+    <script src="~/app/common/services/dataSharingService.js"></script>
+    <script src="~/app/common/services/serviceTypeSearchSharingService.js"></script>
+    <!--Filters-->
+    <script src="~/app/common/filters/customFilters.js"></script>
+    <!--Controllers-->
+    <script src="~/app/dashboard/dashboardController.js"></script>
+    <script src="~/app/serviceRequests/serviceRequestCreateController.js"></script>
+    <script src="~/app/serviceRequests/serviceRequestSearchResultController.js"></script>
+    <script src="~/app/serviceRequests/serviceRequestFormController.js"></script>
+    <script src="~/app/serviceRequests/serviceRequestListController.js"></script>
+    <script src="~/app/serviceRequests/serviceRequestMainSearchController.js"></script>
+    <script src="~/app/serviceRequests/serviceRequestWorkspaceController.js"></script>
+    <script src="~/app/serviceRequests/serviceRequestAddActionController.js"></script>
+    <script src="~/app/serviceRequests/serviceRequestFolioAlertController.js"></script>
+</body>
+</html>

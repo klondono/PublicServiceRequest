@@ -1,0 +1,53 @@
+﻿<div class="panel panel-default panel-default-border">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3 style="color:#555555; font-size:20px" class="panel-title padFix">New Service Request</h3>
+            </div>
+            <div class="col-sm-6">
+                <form>
+                    <div class="input-group">
+                        <input type="text" id="search" class="form-control input-group-form-control-adj" value="" placeholder="Search for Services" ng-model="serviceType.ServiceTypeName">
+                        <div class="input-group-btn">
+                            <a id="btnSearch" ui-sref=".SearchResults({Criteria : serviceType.ServiceTypeName})" title="search" class="btn btn-primary input-group-btn-adj" role="button"><span class="glyphicon glyphicon-search"></span></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <div class="bs-component">
+                <div class="row">
+                    <select class="form-control" id="lstOwnerGroups" ng-change="vm.serviceTypeSearchSharingService.GetServiceTypesForOwnerGroup()" ng-model="vm.serviceTypeSearchSharingService.ServiceTypeOwnerGroupID" ng-options="group.ServiceTypeOwnerGroupID as group.ServiceTypeOwnerGroupName for group in vm.serviceTypeOwnerGroupListResolved.value">
+                        <option value="" ng-selected="true">- Select Business Area -</option>
+                    </select>
+                </div>
+                <br />
+                <div class="row">
+                    <select class="form-control" id="lstServiceTypes" ng-disabled="!vm.serviceTypeSearchSharingService.ServiceTypeOwnerGroupID" ng-change="vm.serviceTypeSearchSharingService.GoToServiceRequestFormView()" ng-model="vm.serviceTypeSearchSharingService.ServiceTypeID" ng-options="serviceType.ServiceTypeID as serviceType.ServiceTypeName for serviceType in vm.serviceTypeSearchSharingService.serviceTypes.value">
+                        <option value="" ng-selected="true">- Select Service Type -</option>
+                    </select>
+                </div>
+                <br>
+                <div ui-view="AssociatedServices"></div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-9">
+            <div ui-view><div id="message" class="panel-body" style="text-align:center; font-size:16px; color:#666666;">Select a business area and request type or input search criteria for desired service.</div></div>
+        </div>
+    </div>
+    <!--<script>
+        $(document).keydown(function(e) {
+                            switch (e.which) {
+                            case 13: // left
+					        $('#btnSearch').click();
+                                break;
+                            default:
+                                return;
+                            }
+                        });
+
+    </script>-->
+</div>

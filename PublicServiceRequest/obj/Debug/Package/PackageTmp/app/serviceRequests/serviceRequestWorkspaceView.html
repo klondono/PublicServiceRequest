@@ -1,0 +1,497 @@
+﻿<!-- Start Kendo-ui templates for context menu and PSR interview link -->
+<script type="text/x-kendo-template" id="kendo-ui-folio-link-template">
+    <span class="hasContextMenu">#:FormattedFolio#</span>
+    <input class="hiddenAddress" type="hidden" value="#:data.SiteAddress#" />
+    <input class="hiddenFolioType" type="hidden" value="#:data.RequestFolioTypeID#" />
+    <input class="hiddenIsConfidential" type="hidden" value="#:data.ConfidentialAtTimeOfRequestFlag#" />
+    <input class="hiddenUserCanViewConfidential" type="hidden" value="#:data.UserCanViewConfidential#" />
+</script>
+<script type="text/x-kendo-template" id="kendo-ui-interview-link-template">
+    # if(EnableInterview == 1){#
+    <a style='margin-left:-7px;' title='Click to Add and Navigate to Valuation Interview Application' target='_blank' href='/PSR_Interview/?RequestId=#:data.RequestFolioID #'><i class='fa fa-plus-circle' aria-hidden='true'></i></a>
+    #}
+    else
+    {#
+    <span></span>
+    #}#
+</script>
+<!-- End Kendo-ui templates for context menu and PSR interview link -->
+<!-- Start Kendo-ui context menu options -->
+<ul style="display:none;" id="contextMenuRequestFolio">
+    <li>
+        <a id="propertySearch" target='_blank' href='#'>Property Search</a>
+    </li>
+    <li><a id="propertyReportCardSearch" target='_blank' href='#'>Property Info. Summary</a></li>
+    <li><a id="pictometrySearch" target='_blank' href='#'>Pictometry</a></li>
+    <li><a id="taxCollectorSearch" target="_blank" href='#'>Tax Collector</a></li>
+    <li><a id="taxComparisonSearch" target="_blank" href="#">Tax Comparison</a></li>
+    <li><a id="taxComparableSalesSearch" target="_blank" href="#">Comparable Sales</a></li>
+    <li><a id="photoSearch" target="_blank" href="#">Photos</a></li>
+    <li><a id="trimNoticeSearch" target="_blank" href="#">TRIM Notice</a></li>
+    <li><a id="fieldCheckSearch" target="_blank" href="#">Field Check Report</a></li>
+    <li><a id="googleMapSearch" target="_blank" href="#">Google Maps</a></li>
+    <li><a id="createAddressChangeLetter" target="_blank" href="#">Address Change Letter</a></li>
+    <li><a id="createDPALetter" target="_blank" href="#">DPA Letter</a></li>
+</ul>
+<!-- End Kendo-ui context menu options -->
+<div ng-show="vm.showSpinner" class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <img style="display:block; margin:auto;" src="Images/ripple.gif">
+    </div>
+</div>
+<div ng-cloak ng-show="!vm.showSpinner">
+    <div class="col-lg-9 col-md-9 col-sm-9">
+        <uib-accordion>
+            <uib-accordion-group panel-class="accordion-custom-panel-blue" is-open="vm.openGeneralInfo">
+                <uib-accordion-heading>
+                    <div style="text-align:center;"><span class="pull-left">Service&nbsp;:&nbsp;{{vm.requestWorkspaceViewModel.ServiceTypeName}}</span><span style="display:inline;">PSR Number&nbsp;:&nbsp;{{:: vm.requestWorkspaceViewModel.FormattedRequestNumber}}</span><span class="pull-right">Status&nbsp;:&nbsp;{{vm.requestWorkspaceViewModel.RequestStatus}}&nbsp;&nbsp;&nbsp;&nbsp;<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': vm.openGeneralInfo, 'glyphicon-chevron-right': !vm.openGeneralInfo}"></i></span></div>
+                </uib-accordion-heading>
+                <fieldset class="custom-border">
+                    <legend class="custom-border">General Info.</legend>
+                    <div class="mainInfo">
+                        <div class="col-3">
+                            <label>
+                                Status:
+                                <span ng-style="{'font-weight':'bold','color':vm.requestWorkspaceViewModel.RequestStatusColor}">{{vm.requestWorkspaceViewModel.RequestStatus}}</span>
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <label>
+                                Priority:&nbsp;
+                                <span>{{:: vm.requestWorkspaceViewModel.Priority}}</span>
+                            </label>
+                        </div>
+
+                        <div class="col-3">
+                            <label>
+                                Origin:&nbsp;
+                                <span>{{:: vm.requestWorkspaceViewModel.Origin}}</span>
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <label>
+                                Created Date:&nbsp;
+                                <span>{{:: vm.requestWorkspaceViewModel.CreatedDate | date: 'MM/dd/yyyy h:mm a'}}</span>
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <label>
+                                Created By:&nbsp;
+                                <span>{{:: vm.requestWorkspaceViewModel.CreatedBy}}</span>
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <label>
+                                Source:&nbsp;
+                                <span>{{:: vm.requestWorkspaceViewModel.ApplicationSourceName}}</span>
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <label>
+                                Notify:&nbsp;
+                                <span>{{vm.requestWorkspaceViewModel.NotifyOfProgress == 0 ? 'No' : 'Yes'}}</span>
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <label>
+                                Completion Date:&nbsp;
+                                <span>{{ vm.requestWorkspaceViewModel.CompletionDate | date:'MM/dd/yyyy'}}</span><span style="display:inline-table;" ng-if="::vm.requestWorkspaceViewModel.CloseWhenChildrenAreClosedFlag" kendo-tooltip k-content="'Request closes when all dependant requests close.'" class="k-group"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <label>
+                                Assigned To:&nbsp;
+                                <span>{{ vm.requestWorkspaceViewModel.CurrentlyAssignedWorker}}</span>
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label>
+                                Customer Comments:&nbsp;
+                                <span>{{:: vm.requestWorkspaceViewModel.Comments}}</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!--<span ng-class="{redText: vm.requestWorkspaceViewModel.DueDatePassed && !vm.requestWorkspaceViewModel.CompletionDate}">{{vm.requestWorkspaceViewModel.DueDate | date:'MM/dd/yyyy'}}</span>-->
+                </fieldset>
+                <fieldset ng-if="::vm.requestWorkspaceViewModel.CustomFields.length" class="custom-border">
+                    <legend class="custom-border">Additional Info.</legend>
+                    <div class="table-responsive col-xs-12 col-sm-12 col-lg-12">
+                        <table class="table table-striped table-hover table-condensed">
+                            <tbody class="addtlInfo">
+                                <tr ng-repeat="customField in ::vm.requestWorkspaceViewModel.CustomFields track by customField.ServiceTypeCustomFieldTransactionID">
+                                    <td class="addtlInfo-customfield-label">{{ customField.CustomFieldLabel}}</td>
+                                    <td class="addtlInfo-customfield-field">{{ customField.CustomFieldValue}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+                <fieldset class="custom-border">
+                    <legend class="custom-border">Customer Info.</legend>
+                    <div class="mainInfo customerInfo" style="display:none;">
+                        <div class="col-2">
+                            <label>
+                                Customer Name:&nbsp;
+                                <span><strong>{{ ::vm.requestWorkspaceViewModel.FormattedTaxpayerName}}</strong></span>
+                            </label>
+                        </div>
+                        <div class="col-2">
+                            <label>
+                                Preferred Language:&nbsp;
+                                <span>{{ ::vm.requestWorkspaceViewModel.TaxpayerPreferredLanguage}}</span>
+                            </label>
+                        </div>
+                        <div class="col-2">
+                            <label>
+                                Phone No:&nbsp;
+                                <span>{{ ::vm.requestWorkspaceViewModel.TaxpayerPhoneNo}}</span>
+                            </label>
+                        </div>
+                        <div class="col-2">
+                            <label>
+                                Email:&nbsp;
+                                <span><a ng-href="mailto:{{::vm.requestWorkspaceViewModel.TaxpayerEmail}}">{{ ::vm.requestWorkspaceViewModel.TaxpayerEmail}}</a></span>
+                            </label>
+                        </div>
+                    </div>
+                   <kendo-grid style="margin-bottom:20px;" id="gridRequestFolio"></kendo-grid>
+                </fieldset>
+            </uib-accordion-group>
+        </uib-accordion>
+        <div class="panel panel-primary" style="margin-bottom:10px;">
+            <div class="panel-body">
+                <fieldset class="custom-border">
+                    <legend class="custom-border">Update PSR</legend>
+                    <div class="table-responsive col-xs-12 col-sm-12 col-lg-12">
+                        <form novalidate name="addActionForm" ng-submit="vm.Save()">
+                            <table class="table borderless table-condensed table-field-display">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                    <label class="control-label" for="lstAvailableActions">Type of Update</label>
+                                                    <select ng-change="vm.GetRequestActionType(vm.selectedRequestActionTypeID)" autofocus class="form-control" name="lstAvailableActions" id="lstAvailableActions" ng-model="vm.selectedRequestActionTypeID" ng-options="avAction.RequestActionTypeID as avAction.RequestActionTypeName for avAction in vm.requestWorkspaceViewModel.RequestAvailableActions | filter: { RequestWorkspaceDisplayCode: 1}">
+                                                        <option value="" ng-selected="true">- Select Update Type -</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                    <div>
+                                                        <label class="control-label" for="lstRequestStatuses">Update Status To</label>
+                                                        <select ng-disabled="!vm.requestActionTypeViewModel.ChangeRequestStatus" class="form-control" name="Status" id="lstRequestStatuses" ng-model="vm.requestActionTypeViewModel.SelectedStatus" ng-options="status as status.StatusName for status in vm.requestActionTypeViewModel.RequestActionStatuses track by status.StatusValue">
+                                                            <option value="" ng-selected="true">- Select Status -</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
+                                                    <label class="control-label">Reassign To:&nbsp;&nbsp;&nbsp;</label>
+                                                    <label class="radio-inline radio-adjust">
+                                                        <input ng-disabled="vm.requestActionTypeViewModel.ReassignRequest == false || vm.requestActionTypeViewModel == null" type="radio" class="radio-label-adj" name="optradio" ng-model="vm.requestActionTypeViewModel.AssignUserFlag" ng-value="true">User
+                                                    </label>
+                                                    <label class="radio-inline radio-adjust">
+                                                        <input ng-disabled="vm.requestActionTypeViewModel.ReassignRequest == false || vm.requestActionTypeViewModel == null" type="radio" class="radio-label-adj" name="optradio" ng-model="vm.requestActionTypeViewModel.AssignUserFlag" ng-value="false">Business Area
+                                                    </label>
+                                                    <div ng-show="vm.requestActionTypeViewModel.AssignUserFlag">
+                                                        <select ng-disabled="vm.requestActionTypeViewModel.ReassignRequest == false || vm.requestActionTypeViewModel == null" class="form-control" name="User" ng-model="vm.requestActionTypeViewModel.SelectedUser" ng-options="user as user.UserFullName for user in vm.requestActionTypeViewModel.RequestActionUsers track by user.UserId">
+                                                            <option value="" ng-selected="true">- Select User -</option>
+                                                        </select>
+                                                    </div>
+                                                    <div ng-show="!vm.requestActionTypeViewModel.AssignUserFlag">
+                                                        <select ng-disabled="vm.requestActionTypeViewModel.ReassignRequest == false || vm.requestActionTypeViewModel == null" class="form-control" name="OwnerGroup" ng-model="vm.requestActionTypeViewModel.SelectedOwnerGroup" ng-options="owner as owner.OwnerGroupName for owner in vm.requestActionTypeViewModel.RequestActionOwnerGroups track by owner.OwnerGroupID">
+                                                            <option value="" ng-selected="true">- Select Business Area -</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="vm.requestActionTypeViewModel.UpdateServiceType">
+                                        <td>
+                                            <div class="row col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                <label class="control-label" for="lstServiceTypes">Update Service Type To</label>
+                                                <select class="form-control" name="ServiceType" id="lstServiceTypes" ng-model="vm.requestActionTypeViewModel.SelectedServiceType" ng-options="serviceType as serviceType.ServiceTypeCompositeName for serviceType in vm.requestActionTypeViewModel.ServiceTypes track by serviceType.ServiceTypeID">
+                                                    <option value="" ng-selected="true">- Select Service Type -</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="row" ng-if="vm.requestActionTypeViewModel.RequestActionCustomFields.length">
+                                                <div style="margin-bottom:15px;" ng-repeat="field in vm.requestActionTypeViewModel.RequestActionCustomFields track by field.CustomFieldID" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                    <label class="control-label" for="">{{field.LabelName}}</label>
+                                                    <div ng-if="field.CustomFieldTypeID == 1">
+                                                        <input ng-required="{{field.RequiredFlag}}" ng-pattern="field.RegularExpression" class="form-control" type="text" title="{{field.TooltipMessage}}" name="DynamicField_{{field.CustomFieldID}}" ng-style="{'text-align':field.TextAlignment}" placeholder="{{field.PlaceholderText}}" ng-model="field.DisplayData">
+                                                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.pattern">{{field.ErrorMessage}}</span>
+                                                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Required.</span>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="field.CustomFieldTypeID == 2">
+                                                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="Yes" ng-model="field.DisplayData" />Yes</label>
+                                                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="No" ng-model="field.DisplayData" />No</label>
+                                                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="field.CustomFieldTypeID == 3">
+                                                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="Yes" ng-model="field.DisplayData" />Yes</label>
+                                                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="No" ng-model="field.DisplayData" />No</label>
+                                                        <label class="radio-inline"><input ng-required="{{field.RequiredFlag}}" title="{{field.TooltipMessage}}" type="radio" name="DynamicField_{{field.CustomFieldID}}" value="NA" ng-model="field.DisplayData" />N/A</label>
+                                                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="field.CustomFieldTypeID == 4">
+                                                        <input model-view-value="true"  ui-mask="99/99/9999" k-options="vm.datePickerConfig" kendo-date-picker ng-required="{{field.RequiredFlag}}" class="form-control" title="{{field.TooltipMessage}}" ng-style="{'text-align':field.TextAlignment}" id="DynamicField_{{field.CustomFieldID}}" name="DynamicField_{{field.CustomFieldID}}" ng-model="field.DisplayData" placeholder="{{field.PlaceholderText}}">
+                                                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Required.</span>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="field.CustomFieldTypeID >= 100">
+                                                        <select ng-change="vm.SelectListChange(field.SelectListDisplayData.SelectListValue, field.DisplayFieldValueInCommentsFlag)" ng-required="{{field.RequiredFlag}}" class="form-control" id="DynamicField_{{field.CustomFieldID}}" name="DynamicField_{{field.CustomFieldID}}" ng-model="field.SelectListDisplayData" ng-options="item.SelectListLabel for item in field.SelectListItems track by item.SelectListValue">
+                                                            <option value="" ng-selected="true">- {{field.PlaceholderText}} -</option>
+                                                        </select>
+                                                        <div ng-show="addActionForm.$submitted || addActionForm['DynamicField_{{field.CustomFieldID}}'].$touched" class="validation-msg" role="alert">
+                                                            <span ng-show="addActionForm['DynamicField_{{field.CustomFieldID}}'].$error.required">Selection required.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <label class="control-label" for="txtComments">Comments</label>
+                                                    <textarea ng-readonly="vm.requestActionTypeViewModel.AddActionPermission == false || vm.requestActionTypeViewModel.ExceededMaximumAllowedOcurrence || !vm.requestActionTypeViewModel.PrecedenceConstraintSatisfied" ng-maxlength="1000" maxlength="1001" class="form-control" name="Comments" id="txtComments" rows="3" placeholder="Please be specific" ng-model="vm.requestActionTypeViewModel.Comments"></textarea>
+                                                    <div ng-show="addActionForm.Comments.$error.maxlength" class="validation-msg" role="alert">
+                                                        <span>Cannot exceed 1000 characters.</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="vm.requestActionTypeViewModel.UploadDocument && vm.requestActionTypeViewModel.AddActionPermission && vm.requestActionTypeViewModel.PrecedenceConstraintSatisfied">
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <label class="control-label" for="">Upload Documents</label>
+                                                    <input kendo-upload name="files" type="file" options="vm.actionCreateKendoUploadOptions" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="vm.requestActionTypeViewModel.AssociatedRequests.length > 0 && vm.requestActionTypeViewModel.AllowReplicationFlag == true">
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <label class="control-label" for="txtComments">Apply To</label>
+                                                    <table id="tblAssociatedRequestCheckboxlist">
+                                                        <tr>
+                                                            <td>
+                                                                <input name="chkBx_SelectAll" type="checkbox" ng-model="vm.SelectAllFlag" ng-change="vm.ToggleAssocRequestSelectAll(vm.SelectAllFlag)" />&nbsp;&nbsp;
+                                                                <label for="chkBx_SelectAll">Select All</label>
+                                                            </td>
+                                                        </tr>
+                                                        <tr ng-repeat="request in vm.requestActionTypeViewModel.AssociatedRequests track by request.RequestID">
+                                                            <td>
+                                                                <div kendo-tooltip k-content="'Service: {{request.ServiceTypeName}}<br>Assigned To: {{request.RequestCurrentWorkerFullName}}<br>Status: {{request.RequestStatus}}'" class="k-group">
+                                                                    <input ng-disabled="vm.requestActionTypeViewModel.ChangeRequestStatus && request.CloseWhenChildrenAreClosedFlag" ng-change="vm.ToggleSelectAllFlag()" ng-model="request.AddAssocRequestFlag" name="chkBx_{{request.RequestID}}" type="checkbox" />&nbsp;&nbsp;
+                                                                    <label for="chkBx_{{request.RequestID}}">{{request.FormattedRequestNumber}}</label>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-top:1px solid #eeeeee">
+                                            <div class="row" style="margin-bottom:10px; padding-top:15px; margin-top:10px; border-top:1px solid #eeeeee;">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="pull-left">
+                                                        <ul style="text-align:left;">
+                                                            <li ng-if="vm.requestActionTypeViewModel.AddActionPermission == false"><span class="validation-msg">You do not have permission to add this action.</span></li>
+                                                            <li ng-if="vm.requestActionTypeViewModel.ExceededMaximumAllowedOcurrence"><span class="validation-msg">Exceeded number of allowed ocurrences for this action.</span></li>
+                                                            <li ng-if="vm.requestActionTypeViewModel.PrecedenceConstraintSatisfied == false"><span class="validation-msg">{{vm.requestActionTypeViewModel.PrecedenceConstraintErrorMsg}}</span></li>
+                                                            <li ng-if="vm.CustomStatusConstraintMessage != ''"><span class="validation-msg">{{vm.CustomStatusConstraintMessage}}</span></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="pull-right">
+                                                        <button type="submit" class="btn btn-primary" ng-disabled="!addActionForm.$valid || vm.disableButton" ng-if="vm.requestActionTypeViewModel.AddActionPermission && !vm.requestActionTypeViewModel.ExceededMaximumAllowedOcurrence && vm.requestActionTypeViewModel.PrecedenceConstraintSatisfied">
+                                                            <span ng-show="vm.saveButtonText == 'Saving'"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+                                                            {{ vm.saveButtonText }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="panel panel-primary" ng-if="vm.requestWorkspaceViewModel.RequestActions.length">
+            <div class="panel-body">
+                <fieldset class="custom-border">
+                    <legend class="custom-border" style="margin-bottom:0px!important;">Action History</legend>
+                    <div class="requestActions-container">
+                        <span style="margin-bottom:10px;" class="pull-right">
+                            Show&nbsp;
+                            <select ng-model="vm.filterValue">
+                                <option value="10">10</option>
+                                <option value="30">30</option>
+                                <option value="70">60</option>
+                                <option value="100">100</option>
+                                <option value="vm.requestWorkspaceViewModel.RequestActions.length">All</option>
+                            </select>
+                            &nbsp;of&nbsp;{{vm.requestWorkspaceViewModel.RequestActions.length}} Records
+                        </span>
+                        <table class="table table-no-horizontal-border">
+                            <thead>
+                                <tr class="requestActions-header">
+                                    <td style="min-width:160px;">
+                                        <a ng-click="vm.SetActionOrderBy('ActionTypeName')">Action</a>
+                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-up': vm.requestWorkspaceViewModel.SortBy == 'ActionTypeName'&& vm.requestWorkspaceViewModel.BlnAsc, 'glyphicon-chevron-down': !vm.requestWorkspaceViewModel.BlnAsc && vm.requestWorkspaceViewModel.SortBy == 'ActionTypeName'}"></i>
+                                    </td>
+                                    <td style="width:130px;">
+                                        <a ng-click="vm.SetActionOrderBy('ActionAddedDate')">Action Date</a>
+                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-up': vm.requestWorkspaceViewModel.SortBy == 'ActionAddedDate'&& vm.requestWorkspaceViewModel.BlnAsc, 'glyphicon-chevron-down': !vm.requestWorkspaceViewModel.BlnAsc && vm.requestWorkspaceViewModel.SortBy == 'ActionAddedDate'}"></i>
+                                    </td>
+                                    <td>
+                                        <a ng-click="vm.SetActionOrderBy('ActionAddedBy')">Action By</a>
+                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-up': vm.requestWorkspaceViewModel.SortBy == 'ActionAddedBy'&& vm.requestWorkspaceViewModel.BlnAsc, 'glyphicon-chevron-down': !vm.requestWorkspaceViewModel.BlnAsc && vm.requestWorkspaceViewModel.SortBy == 'ActionAddedBy'}"></i>
+                                    </td>
+                                    <td>
+                                        <a ng-click="vm.SetActionOrderBy('ActionAssignedEntityName')">Reassigned To</a>
+                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-up': vm.requestWorkspaceViewModel.SortBy == 'ActionAssignedEntityName'&& vm.requestWorkspaceViewModel.BlnAsc, 'glyphicon-chevron-down': !vm.requestWorkspaceViewModel.BlnAsc && vm.requestWorkspaceViewModel.SortBy == 'ActionAssignedEntityName'}"></i>
+                                    </td>
+                                    <td style="width:135px;">
+                                        <a ng-click="vm.SetActionOrderBy('ActionStatusChangedName')">Status Changed</a>
+                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-up': vm.requestWorkspaceViewModel.SortBy == 'ActionStatusChangedName'&& vm.requestWorkspaceViewModel.BlnAsc, 'glyphicon-chevron-down': !vm.requestWorkspaceViewModel.BlnAsc && vm.requestWorkspaceViewModel.SortBy == 'ActionStatusChangedName'}"></i>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody class="requestActions-tbody" ng-repeat="action in vm.requestWorkspaceViewModel.RequestActions  | myLimitTo:vm.filterValue track by action.RequestActionID">
+                                <tr class="action-mainInfo-tr" ng-style="{'background-color': action.BackgroundColor, 'color': action.TextColor}">
+                                    <td>
+                                        {{action.ActionTypeName}}
+                                    </td>
+                                    <td class="requestActions-td letter-space-adj">
+                                        {{ action.ActionAddedDate | date:'short'}}
+                                    </td>
+                                    <td class="requestActions-td">
+                                        {{action.ActionAddedBy}}
+                                    </td>
+                                    <td class="requestActions-td">
+                                        {{ action.ActionAssignedEntityName}}
+                                    </td>
+                                    <td class="requestActions-td">
+                                        {{action.ActionStatusChangedName}}
+                                    </td>
+                                </tr>
+                                <tr ng-if="action.RequestActionCustomFields.length">
+                                    <td colspan="5">
+                                        <div ng-repeat="field in action.RequestActionCustomFields track by field.ServiceTypeCustomFieldTransactionID" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                            <span style="font-weight:bold; margin-left:-15px;">{{field.CustomFieldLabel}}:</span>&nbsp;&nbsp;{{field.CustomFieldValue}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-if="action.RequestActionAttachments.length">
+                                    <td><strong>Attachments:</strong></td>
+                                    <td colspan="4">
+                                        <div ng-repeat="subAttachment in action.RequestActionAttachments track by subAttachment.RequestAttachmentID" class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                                            <span style="display:block" ng-if="subAttachment.ConfidentialAttachmentFlag">Confidential</span>
+                                            <a title="Click to view attachment" class="AttachmentLink" ng-click="vm.ViewAttachment(subAttachment.RequestAttachmentName, subAttachment.SubFolder, subAttachment.ConfidentialAttachmentFlag)">{{subAttachment.RequestAttachmentFriendlyName}}</a><br />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-if="action.ActionComments" style="max-height:15px;">
+                                    <td colspan="5" class="requestActions-td">
+                                        <span style="font-weight:bold;">Comments:&nbsp;</span>{{action.ActionComments}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-3">
+        <uib-accordion>
+            <uib-accordion-group panel-class="accordion-custom-panel-blue" is-open="vm.openAttachments">
+                <uib-accordion-heading>
+                    <div class="badge">{{ vm.requestWorkspaceViewModel.RequestAttachments.length}}</div>&nbsp;&nbsp;<span style="font-size:14px">Attachments</span>
+                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': vm.openAttachments, 'glyphicon-chevron-right': !vm.openAttachments}"></i>
+                </uib-accordion-heading>
+                <div class="attachment-list" ng-repeat="attachment in vm.requestWorkspaceViewModel.RequestAttachments">
+                    <a title="Click to view attachment" class="AttachmentLink" ng-click="vm.ViewAttachment(attachment.RequestAttachmentName, attachment.SubFolder, attachment.ConfidentialAttachmentFlag)">{{attachment.RequestAttachmentFriendlyName}}</a><br />
+                    <span style="display:block" ng-if="attachment.ConfidentialAttachmentFlag">Confidential</span>
+                    {{ attachment.AttachmentAddedBy}}<br />
+                    {{ attachment.RequestAttachmentDate | date:'short'}}<br />
+                    <hr style="margin-top:10px; margin-bottom:10px;" ng-hide="$last" />
+                </div>
+            </uib-accordion-group>
+            <uib-accordion-group panel-class="accordion-custom-panel-blue" is-open="vm.openRequests">
+                <uib-accordion-heading>
+                    <div class="badge">{{ vm.requestWorkspaceViewModel.AssociatedRequests.length}}</div>&nbsp;&nbsp;<span style="font-size:14px">Associated Requests</span>
+                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': vm.openRequests, 'glyphicon-chevron-right': !vm.openRequests}"></i>
+                </uib-accordion-heading>
+                <ol class="assoc-request" ng-repeat="assocRequest in vm.requestWorkspaceViewModel.AssociatedRequests track by assocRequest.RequestID">
+                    <li>
+                        <label for="spnRequestNo">PSR Number</label>
+                        <span id="spnRequestNo"><a title="Click to view PSR" style="font-weight:bold; color:#0088cc;" ui-sref='Workspace({Id: assocRequest.RequestID})'>{{assocRequest.FormattedRequestNumber}}</a></span>
+                    </li>
+                    <li>
+                        <label for="spnService">Service</label>
+                        <span id="spnService" style="font-weight:bold; color:darkslategrey">{{assocRequest.ServiceTypeName}}</span>
+                    </li>
+                    <li>
+                        <label for="spnCreated">Created</label>
+                        <span id="spnCreated">{{assocRequest.CreatedDate | date:'MM/dd/yyyy'}}</span>
+                    </li>
+                    <!--<li>
+                        <label for="spnDue">Due</label>
+                        <span id="spnDue" ng-class="{'redText': assocRequest.DueDatePassed && !assocRequest.CompletionDate}">{{assocRequest.CreatedDate | date:'MM/dd/yyyy'}}</span>
+                    </li>-->
+                    <li ng-if="assocRequest.CompletionDate">
+                        <label for="spnCompletionDate">Completed</label>
+                        <span id="spnCompletionDate">{{ assocRequest.CompletionDate | date:'MM/dd/yyyy'}}</span>
+                    </li>
+                    <li ng-if="assocRequest.RequestCurrentWorkerFullName">
+                        <label for="spnAssignedTo">Assigned To</label>
+                        <span id="spnAssignedTo">{{ assocRequest.RequestCurrentWorkerFullName}}</span>
+                    </li>
+                    <li>
+                        <label for="spnStatus">Status</label>
+                        <span id="spnStatus" ng-style="{'font-weight':'bold','color':assocRequest.RequestStatusColor}">{{assocRequest.RequestStatus}}</span>
+                    </li>
+                </ol>
+            </uib-accordion-group>
+            <uib-accordion-group panel-class="accordion-custom-panel-blue" is-open="vm.openActions">
+                <uib-accordion-heading>
+                    <!--<div class="badge">{{ vm.requestWorkspaceViewModel.RequestAvailableActions.length}}</div>-->&nbsp;&nbsp;<span style="font-size:14px; margin-left:20px;">Available Actions</span>
+                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': vm.openActions, 'glyphicon-chevron-right': !vm.openActions}"></i>
+                </uib-accordion-heading>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-available-action">
+                    <div kendo-tooltip k-content="'Prints pertinent information related to this request.'" class="k-group">
+                        <a ng-href="{{::vm.ReportURL}}" href="" target="_blank" style="background-color:#005580; color:#ffffff;" class="btn btn-available-action">
+                            Print Confirmation
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-available-action" ng-repeat="avAction in vm.requestWorkspaceViewModel.RequestAvailableActions  | filter : {RequestWorkspaceDisplayCode:2} track by avAction.RequestActionTypeID">
+                    <div kendo-tooltip k-content="'{{ avAction.RequestActionTypeDescription}}'" class="k-group">
+                        <a ng-click="vm.OpenModal(avAction.RequestActionTypeID, vm.requestWorkspaceViewModel.RequestID)" ng-style="{'background-color': avAction.BackgroundColor, 'color': avAction.TextColor}" class="btn btn-available-action">
+                            {{ avAction.RequestActionTypeName}}
+                        </a>
+                    </div>
+                </div>
+            </uib-accordion-group>
+        </uib-accordion>
+    </div>
+</div>
+
